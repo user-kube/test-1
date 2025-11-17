@@ -1,0 +1,188 @@
+1) creating infrastructre by using terraform on aws	
+		
+provider "aws" {
+    region = "us-east-1"
+}
+
+resource "aws_instance" "Jenkins-server" {
+    ami = "ami-0f409bae3775dc8e5"
+    instance_type = "t2.micro"
+    key_name = "Microdegree"
+    security_groups = ["myallinonesecuritygroup"]
+    user_data = file("jenkins-script.sh")
+    tags = {
+        Name = "Jenkins-Server"
+    }
+}
+
+resource "aws_instance" "web" {
+    ami = "ami-0f409bae3775dc8e5"
+    instance_type = "t2.micro"
+    key_name = "Microdegree"
+    security_groups = ["myallinonesecuritygroup"]
+    user_data = file("Docker-script.sh")
+    tags = {
+        Name = "Docker-Server"
+    }
+}
+
+
+
+commands:terraform init
+		 		 	terraform validate
+		 		 terraform plan 
+			 	 terraform apply
+		 		 
+		  
+
+https://github.com/ManojKRISHNAPPA/test-1.git
+		  
+2) Setting up the jenkins server 
+	
+run the script 
+
+#!/bin/bash
+sudo wget -O /etc/yum.repos.d/jenkins.repo \
+    https://pkg.jenkins.io/redhat-stable/jenkins.repo
+sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+sudo yum upgrade -y
+# Add required dependencies for the jenkins package
+sudo yum install java -y
+sudo yum install jenkins -y
+sudo systemctl daemon-reload
+sudo systemctl enable jenkins
+sudo systemctl start jenkins
+hostname Jenkins-Sever
+sudo yum install git -y 
+
+
+3) install the git hub plugin in the manage plugin
+4) Manage-Jenkins--> tools-> add the git to global tool configuration
+5) integrate with git 
+6) Github and Jenkins integration is completed.
+
+7) integrating with maven:
+ref: https://maven.apache.org/install.html
+
+
+	M2_HOME=/opt/maven/apache-maven
+	M2=/opt/maven/apache-maven/bin/
+	JAVA_HOME=/usr/lib/jvm/java-11-openjdk-11.0.16.0.8-1.amzn2.0.1.x86_64
+	PATH=$PATH:$HOME/bin:$M2_HOME:$M2:$JAVA_HOME
+	
+	source .bash_profile.
+	
+	mvn -v
+	
+	maven-life cycle goals
+	
+	https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html
+	
+	Pom file: details 
+	https://maven.apache.org/guides/introduction/introduction-to-the-pom.html
+	
+	configuring in the Jenkins
+
+
+
+
+
+
+additional:
+access tomcat application from browser on port 8080
+
+http://<Public_IP>:8080
+Using unique ports for each application is a best practice in an environment. But Tomcat and Jenkins run on port number 8080. Hence lets change tomcat port number to 8090. Change port number in conf/server.xml file under tomcat home
+
+
+
+
+3) Setting up the docker 
+
+yum install docker -y
+docker --version 
+
+# start docker services
+service docker start
+service docker status
+
+useradd dockeradmin
+passwd dockeradmin
+
+vi /etc/ssh/sshd_config
+
+usermod -aG docker dockeradmin
+
+
+JEnkins-->manage jenkins---> Install publish over ssh 
+
+adding SSH Server --> 
+Name dockerhost
+Hostname 172.31.43.240
+Username  dockeradmin 
+
+
+cd  /opt/docker;
+docker build -t tomcat:v1 .;
+docker stop cicd
+docker rm cicd
+docker run -it -d --name   cicd -p 8083:8080 tomcat:v1;
+
+Post-build Actions
+Send build artifacts over SSH
+SSH Publishers
+SSH Server
+Name -> dockerhost
+Advanced
+Transfers
+
+Transfer Set
+Source files-->webapp/target/*.war
+Remove prefix---> webapp/target
+Remote directory-->//opt//docker
+
+Exec command:
+cd  /opt/docker;
+docker build -t tomcat:v1 .;
+docker stop cicd
+docker rm cicd
+docker run -it -d --name   cicd -p 8083:8080 tomcat:v1;
+
+
+
+1. Obtain application specific password
+• sing-in to gmail account >> navigate to settings >> privacy and security settings
+• setup two step verification settings (because without two step verification we cannot generate application specific password)
+• after setting up two step verification setting in gmail account navigate back to security and privacy settings
+• click on application specific password >> give the name of the application in the drop down as Jenkins (google by default does not have any specific application password setting for Jenkins) >> this will generate password note down the password generated
+Note : Since the Password has a overall control over you gmail account disclosing it may lead serious consequences
+2. Setup SMTP configuration for sending the gmail
+• navigate in the following path from dashboard after logging in manage Jenkins >> configure system >> scroll down to email notification section
+• enter the following parameters
+• smtp server : smtp.gmail.com
+• default user email suffix : @gmail.com
+• select advanced
+• check smtp authentication
+• username : (Your gmail id)
+• password : (application specific password generated from previous step)
+• check use SSL
+• SMTP port : 465
+• Reply to address : noreply@gmail.com(optional)
+• Charset : UTF-8 (by default it is UTF-8)
+• select Test configuration mail
+• Test e-mail recipient : <enter recipient email id >
+click on test configuration which will send a test mail to the recipient e-mail id
+
+
+App-Password:->
+	
+	
+
+
+
+
+
+
+
+	
+
